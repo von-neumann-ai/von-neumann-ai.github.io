@@ -60,7 +60,9 @@ Now that we understood the infrastructure requirements of a data center, I will 
 
 As we spoke earlier, data centers are mainly dependent on power infrastructure. As we increase the wattage requirement, reliably supplying and maintaining that much power to a *single location* becomes very difficult. It's much easier to supply 100 KW to 100 different locations as opposed to supply 100 * 100 = 10 MW to a single location.
 
-This is primarily because DISCOM network is built to distribute a lot of power but in a geographically distributed manner. In Karnataka alone, total [power supply distributed](https://cea.nic.in/dashboard/?lang=en) is roughly 17 GW! That's 17,000 MW. So 10 MW, even 100 MW, in aggregate is not much of a concern to them. However supplying 10 MW of reliable power to a single location requires a lot of infrastructure investment from DISCOM. 
+This is primarily because DISCOM network is built to distribute a lot of power but in a geographically distributed manner. In Karnataka alone, total [power supply distributed](https://cea.nic.in/dashboard/?lang=en) is roughly 17 GW! That's 17,000 MW. So 10 MW, even 100 MW, in aggregate is not much of a concern to them. However supplying 10 MW of reliable power to a single location requires a lot of infrastructure investment from DISCOM.
+
+![Karnataka Power Supply](/_static/blog/karnataka-power-supply.png)
 
 Another factor comes from the math of probability. Two independent 100 KW micro data centers in a 'grid' is more reliable than single 200 KW data center. This is because one data center can act as failover for second one as opposed to complete blackout. This is the reason even mega data centers are constructed with 'availability' zones. 
 
