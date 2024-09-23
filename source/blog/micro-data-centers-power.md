@@ -28,4 +28,22 @@ Let's do some math for power bill of a 100 KW data center. We'll assume you have
 
 ![Karnataka Power Costs](/_static/blog/kerc_power_tariff.png)
 
-There are two sections in this: fixed charges and energy charges. Fixed charges is what you pay per month for total load you have taken. For 100 KW, that will be 365 INR/KW * 100 KW = 36,500 INR. Next we have energy charges. Let's assume we do 50% of capacity utilization i.e. on average we consume 50% of peak load. So that gives us 100 KW * 50% * 24 hours * 30 days / month = 36000 KWh or units. That comes down to 8.00 INR/unit * 36000 units = 2,88,000 INR. So your total monthly bill is about INR 3,24,500. 
+There are two sections in this: fixed charges and energy charges. Fixed charges is what you pay per month for total load you have taken. For 100 KW, that will be 365 INR/KW * 100 KW = 36,500 INR. Next we have energy charges. Let's assume we do 50% of capacity utilization i.e. on average we consume 50% of peak load. So that gives us 100 KW * 50% * 24 hours * 30 days / month = 36000 KWh or units. That comes down to 8.00 INR/unit * 36000 units = 2,88,000 INR. So your total monthly bill is about INR 3,24,500. To keep this number in perspective, you pay about INR 7,00,000 for renting **one** H100 GPU on AWS!
+
+### Backup Power
+
+Well, we can't rely on grid power for 100% uninterrupted power. LT connections are particularly unreliable because transformer is shared across multiple connections. Any maintenance on any one of these connections will make you go down. Most common reason for LT interruption in Bangalore is tree fall during a storm on one of the overhead LT lines. HT interruptions are less common because HT lines are almost always underground -- at least here in Bangalore.
+
+So we need to have alternate power source. Usually this is a diesel generator because it is highly economical. A 100 KW generator costs under 10,00,000 INR. It costs about INR 24 per unit/KWH of energy because we need to put in diesel. When power is interrupted, our diesel generator needs to automatically kick in.
+
+Even as diesel generator starts automatically on power loss, it usually takes about 2-3 minutes to start. We can't afford to have down time even for that. So we need to install a battery pack, usually of a lead acid chemistry, rated to hold the 100 KW power for about 15 minutes. This also turns out to be fairly cheap under 5,00,000.
+
+### Real Estate
+
+Well we need a space to keep all this hardware: transformer, batteries, generator and the computers! Surprisingly this is the easiest part about data center. We don't need particularly large space. For transformer and generator rated for 100 KW, we'll require about 200 sqft of space in cellar of the building. For computers/servers themselves we don't need more than 1000 sqft of space. Overall, a structure built on a 1000 sqft plot can easily handle 100 KW micro data center!
+
+Underappreciated aspect of real estate is availability of talent. You might find this piece of land for very cheap if you go out of a city. However it'll be hard to get good talent in such a location. These servers require a lot of manpower to maintain -- both hardware and software. Separating hardware from software teams has proven to be a bad choice in my experience.
+
+## Why Micro Data Centers?
+
+Now that we understood the infrastructure requirements of a data center, I will now make a case for Micro Data Center < 100 KW capacity as opposed to a Mega Data Center with > 1 MW capacity. The big
