@@ -36,6 +36,8 @@ Well, we can't rely on grid power for 100% uninterrupted power. LT connections a
 
 So we need to have alternate power source. Usually this is a diesel generator because it is highly economical. A 100 KW generator costs under 10,00,000 INR. It costs about INR 24 per unit/KWH of energy because we need to put in diesel. When power is interrupted, our diesel generator needs to automatically kick in.
 
+![100 KW Generator](/_static/blog/100kw-generator.png)
+
 Even as diesel generator starts automatically on power loss, it usually takes about 2-3 minutes to start. We can't afford to have down time even for that. So we need to install a battery pack, usually of a lead acid chemistry, rated to hold the 100 KW power for about 15 minutes. This also turns out to be fairly cheap under 5,00,000.
 
 ### Real Estate
@@ -44,6 +46,28 @@ Well we need a space to keep all this hardware: transformer, batteries, generato
 
 Underappreciated aspect of real estate is availability of talent. You might find this piece of land for very cheap if you go out of a city. However it'll be hard to get good talent in such a location. These servers require a lot of manpower to maintain -- both hardware and software. Separating hardware from software teams has proven to be a bad choice in my experience.
 
+To make it real, here's a pic of building with 100 KW connection and generator to go with it. This is an office space in Indiranagar. You can see generator in the cellar corner. A floor in this will be more than enough for a 100 KW micro data center.
+
+![100 KW Building](/_static/blog/100kw-building.png)
+
+
 ## Why Micro Data Centers?
 
-Now that we understood the infrastructure requirements of a data center, I will now make a case for Micro Data Center < 100 KW capacity as opposed to a Mega Data Center with > 1 MW capacity. The big
+Now that we understood the infrastructure requirements of a data center, I will now make a case for Micro Data Center ~ 100 KW capacity as opposed to a Mega Data Center with > 1 MW capacity. 
+
+
+### Reliable
+
+As we spoke earlier, data centers are mainly dependent on power infrastructure. As we increase the wattage requirement, reliably supplying and maintaining that much power to a *single location* becomes very difficult. It's much easier to supply 100 KW to 100 different locations as opposed to supply 100 * 100 = 10 MW to a single location.
+
+This is primarily because DISCOM network is built to distribute a lot of power but in a geographically distributed manner. In Karnataka alone, total [power supply distributed](https://cea.nic.in/dashboard/?lang=en) is roughly 17 GW! That's 17,000 MW. So 10 MW, even 100 MW, in aggregate is not much of a concern to them. However supplying 10 MW of reliable power to a single location requires a lot of infrastructure investment from DISCOM. 
+
+Another factor comes from the math of probability. Two independent 100 KW micro data centers in a 'grid' is more reliable than single 200 KW data center. This is because one data center can act as failover for second one as opposed to complete blackout. This is the reason even mega data centers are constructed with 'availability' zones. 
+
+### Cheap
+
+It's much cheaper to build a 100 KW data center than a 10 MW data center. This is obviously because the power infra costs scale super linearly. This means an entrepreneur can aspire to build a micro data center. On the other hand, mega data centers are possible only for deep pocketed corporations like Amazon or Microsoft. This lower barrier to entry allows more supply to the market. This allows for more market based mechanisms to operate as opposed to oligopoly we are in today.
+
+## Conclusion
+
+In this post, we have seen the power infrastructure requirements of a data center. We have understood that data centers require uninterrupted power supply and what it takes to achieve that. We have also seen how it is hard to scale power to a single location as opposed to distributed manner. This makes micro data centers with 100 KW sort of capacities particularly attractive.
