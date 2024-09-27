@@ -1,7 +1,6 @@
 # Power of Micro Data Centers
 
 > Author: Sasank Chilamkurthy
-> Published: 23/09/2024
 
 I have had the good fortune of being an author of [policy note](https://pplus.ai/micromega) about micro data centers (MDC). The paper was led by [EkStep foundation](https://peopleplus.ai/occ), the same folks behind UPI, ONDC and other such spectacularly successful projects. Micro data centers, as name suggests, is a small scale data center in about 50 KW to 300 KW power range. They can be a viable alternative to centralized mega data centers which can guzzle up to 10,000 KW or more power.
 
@@ -72,3 +71,5 @@ It's much cheaper to build a 100 KW data center than a 10 MW data center. This i
 ## Conclusion
 
 In this post, we have seen the power infrastructure requirements of a data center. We have understood that data centers require uninterrupted power supply and what it takes to achieve that. We have also seen how it is hard to scale power to a single location as opposed to distributed manner. This makes micro data centers with 100 KW sort of capacities particularly attractive.
+
+> Published: 23/09/2024
