@@ -18,7 +18,7 @@ JOHNAIC is your personal AI server. You can use it to run many AI and software a
 * Small footprint
 * Cloud-in-a-box
 * Free as in freedom
-* ₹199,999 + GST
+* ₹249,999 + GST
 
 .. figure:: _static/plug-and-play.jpg
    :alt: JOHNAIC, Your Personal AI Server

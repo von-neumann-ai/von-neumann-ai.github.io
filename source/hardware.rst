@@ -7,7 +7,7 @@ Robust and Reliable AI Hardware
 JOHNAIC comes with following hardware:
 
 * Intel i5 12400 CPU
-* Intel Arc 770 16 GB GPU
+* Nvidia 4070 Ti Super 16 GB GPU
 * 64 GB RAM
 * 1 TB SSD
 * 1100 VA UPS (optional)
