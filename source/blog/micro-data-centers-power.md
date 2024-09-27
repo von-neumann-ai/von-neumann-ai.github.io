@@ -71,3 +71,5 @@ It's much cheaper to build a 100 KW data center than a 10 MW data center. This i
 ## Conclusion
 
 In this post, we have seen the power infrastructure requirements of a data center. We have understood that data centers require uninterrupted power supply and what it takes to achieve that. We have also seen how it is hard to scale power to a single location as opposed to distributed manner. This makes micro data centers with 100 KW sort of capacities particularly attractive.
+
+> Published: 23/09/2024
