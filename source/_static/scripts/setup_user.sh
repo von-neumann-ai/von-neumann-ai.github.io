@@ -16,10 +16,11 @@ fi
 
 
 # NVM
-if [ ! -d ~/.config/nvm ]; then
+export NVM_DIR=~/.nvm
+if [ ! -d $NVM_DIR ]; then
 	echo "==> Installing Node/NVM"
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-	. ~/.config/nvm/nvm.sh
+	. $NVM_DIR/nvm.sh
 	nvm install --lts
 else
 	echo "==> NVM already installed. Skipping"
@@ -47,7 +48,7 @@ if [ ! -d ~/.fzf ]; then
 	~/.fzf/install --all
 
 	# eternal history
-	cp ~/.bash_history ~/.bash_eternal_history
+	cp ~/.bash_history ~/.bash_eternal_history || true
 	tee -a ~/.bashrc << END
 # Eternal bash history.
 # ---------------------
