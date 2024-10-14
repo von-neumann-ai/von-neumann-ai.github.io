@@ -179,6 +179,44 @@ Sun Oct 13 19:32:06 2024
 
 ```
 
+Finally, let's verify that ports are exposed as well. 
+
+```
+sasank@my-distro:~$ python3 -m http.server 8001
+Serving HTTP on 0.0.0.0 port 8001 (http://0.0.0.0:8001/) ...
+```
+
+Now open another terminal in host and access the files
+
+```
+sasank@JOHNAIC:~$ curl 0.0.0.0:8001
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Directory listing for /</title>
+</head>
+<body>
+<h1>Directory listing for /</h1>
+<hr>
+<ul>
+<li><a href=".bash_eternal_history">.bash_eternal_history</a></li>
+<li><a href=".bash_history">.bash_history</a></li>
+<li><a href=".bash_logout">.bash_logout</a></li>
+<li><a href=".bashrc">.bashrc</a></li>
+<li><a href="Desktop/">Desktop/</a></li>
+<li><a href="Documents/">Documents/</a></li>
+<li><a href="Downloads/">Downloads/</a></li>
+<li><a href="Music/">Music/</a></li>
+<li><a href="Pictures/">Pictures/</a></li>
+<li><a href="Public/">Public/</a></li>
+<li><a href="Videos/">Videos/</a></li>
+</ul>
+<hr>
+</body>
+</html>
+```
+
 `ls` or `list` is another useful command in distrobox to see list of running distroboxes.
 
 ```
