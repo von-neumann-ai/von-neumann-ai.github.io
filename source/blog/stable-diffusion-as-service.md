@@ -77,7 +77,7 @@ Description=StableDiffusion  Container Service
 After=network.target
 
 [Service]
-ExecStart=distrobox enter stable-diffusion -- /bin/sh -c "/home/sasank/stable-diffusion-webui/webui.sh -f --xformers --listen --api --api-auth sd-web-user:password123 --gradio-auth sd-web-user:gradio123"
+ExecStart=distrobox enter stable-diffusion -- /bin/sh -c "<path to automatic1111 folder>/webui.sh -f --xformers --listen --api --api-auth sd-web-user:password123 --gradio-auth sd-web-user:gradio123"
 ExecStop=distrobox stop --yes stable-diffusion
 Restart=always
 RestartSec=5
