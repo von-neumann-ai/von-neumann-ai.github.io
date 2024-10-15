@@ -7,3 +7,4 @@ Blog
     security-virtualization-containerization
     security-rootless-containers
     distrobox-sudo-without-sudo
+    stable-diffusion-as-service
