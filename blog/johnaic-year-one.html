@@ -1,0 +1,389 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="Stable Diffusion: Automatic1111 with Distrobox and Systemd" href="stable-diffusion-as-service.html" />
+        <link rel="canonical" href="https://von-neumann.ai/blog/johnaic-year-one.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>JOHNAIC: Year One - Von Neumann AI</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --color-brand-primary: #2D1A6D;
+  --color-brand-content: #2D1A6D;
+  --color-content-foreground: #2D1A6D;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: white;
+  --color-brand-content: white;
+  --color-content-foreground: white;
+  --color-background-primary: #0A031D;
+  --color-background-secondary: #0A031D;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: white;
+  --color-brand-content: white;
+  --color-content-foreground: white;
+  --color-background-primary: #0A031D;
+  --color-background-secondary: #0A031D;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Von Neumann AI</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/logo-light.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/logo-dark.png" alt="Dark Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">JOHNAIC: Your Personal AI Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hardware.html">Robust and Reliable AI Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software.html">Powerful Suite of Default Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../key-information.html">Key Information</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Blog</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Blog</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ola-cloud-costs.html">Why Ola is Moving On Prem: Cloud and its Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="micro-data-centers-power.html">Power of Micro Data Centers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security-virtualization-containerization.html">Security: Virtualization and Containerization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security-rootless-containers.html">Security: Docker, Podman and Rootless Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distrobox-sudo-without-sudo.html">Distrobox: <code class="docutils literal notranslate"><span class="pre">sudo</span></code> without <code class="docutils literal notranslate"><span class="pre">sudo</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="stable-diffusion-as-service.html">Stable Diffusion: Automatic1111 with Distrobox and Systemd</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">JOHNAIC: Year One</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/blog/johnaic-year-one.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="johnaic-year-one">
+<h1>JOHNAIC: Year One<a class="headerlink" href="#johnaic-year-one" title="Link to this heading">¶</a></h1>
+<p>It’s been an year since I started my journey with building computers. I think it’s worth sitting down and reflect on the path we have taken over last one year. So here we go.</p>
+<section id="building-computers">
+<h2>Building Computers<a class="headerlink" href="#building-computers" title="Link to this heading">¶</a></h2>
+<p>I built up intense interest in computers and programming languages since I read biographies of <a class="reference external" href="https://www.goodreads.com/book/show/150731.Alan_Turing">Turing</a>, <a class="reference external" href="https://www.goodreads.com/book/show/722412.The_Dream_Machine">Licklider</a>, <a class="reference external" href="https://www.goodreads.com/book/show/61089520-the-man-from-the-future">Von Neumann</a> and <a class="reference external" href="https://www.goodreads.com/book/show/11084145-steve-jobs">Steve Jobs</a> in 2023. I have always been a history buff and studied historical computers like ENIAC, JOHNNIAC, Lisp Machines, IBM System 360, Intel 4004, Apple II. Computers, something we take granted as we read this, looked very different back in those days. History put much needed perspective on computers for me.</p>
+<p>Computers were a product of industrial revolution. First and foremost they are machines. They always existed to automate things. <a class="reference external" href="https://chsasank.com/classic_papers/darthmouth-artifical-intelligence-summer-resarch-proposal.html">John McCarthy in 1950s</a>, before we even had computers based on transistors, called this automation ‘Artificial Intelligence’. Turing, father of modern computers, <a class="reference external" href="https://web.iitd.ac.in/~sumeet/Turing50.pdf">called this automation</a> ‘Thinking Machines’. What’s not lost on me are that they are <em>machines</em> still.</p>
+<p>Another important fascination for me is manufacturing. I came to accept that doing software alone for some remote computers, aka <a class="reference external" href="https://en.wikipedia.org/wiki/Software_as_a_service">SaaS</a>, is saturating. I studied <a class="reference external" href="https://www.amazon.in/Supply-Chain-Management-Strategy-Operation/dp/0133800202">supply chain mechanisms</a> of <a class="reference external" href="https://www.amazon.in/Machine-That-Changed-World-Revolutionizing/dp/0743299795">Ford and Toyota</a> and learnt how they put together crazy <em>machines</em> that are cars. I visited modern electronic factories in <a class="reference external" href="https://g.co/kgs/QyH6q7V">Sahasra Noida</a> and <a class="reference external" href="https://g.co/kgs/UJvKetX">Dixon Tirupati</a>. I learnt that manufacturing is much easier than people make it out to be! And it’s ultra scalable.</p>
+<p><img alt="Adithya Building a JOHNAIC" src="../_images/adithya-building-computers.jpg" /></p>
+<p>Thus, it became almost a holy mission for me to manufacture computers.</p>
+</section>
+<section id="compilers-bug">
+<h2>Compilers Bug<a class="headerlink" href="#compilers-bug" title="Link to this heading">¶</a></h2>
+<p>I can clearly see that what mattered for these thinking machines is the amount of compute they have access to. What’s special with OpenAI is that they had the guts and GPUs to put money behind so called <a class="reference external" href="https://arxiv.org/pdf/2001.08361">scaling laws</a>. There was no fundamental architectural innovation behind GPT-3 except that they just trained bigger model for longer. This idea of hardware lottery is <a class="reference external" href="https://arxiv.org/pdf/2009.06489">observed through out the computing history</a>. Richard Sutton puts <a class="reference external" href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">this succinctly</a>:</p>
+<blockquote>
+<div><p>The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin.</p>
+</div></blockquote>
+<p>There’s a reason that Nvidia gained the most in terms of stock price with current AI boom. However there is also a nefarious reason why Nvidia is the only one that cashed in the most among semiconductor stocks. Nvidia’s CUDA compiler framework is that reason. Compilers take human written code and convert them to machine understandable instructions. Most AI code written today works only on Nvidia GPUs. I have given a talk (<a class="reference external" href="https://chsasank.com/assets/slides/opensource-gpu-stack.pdf">slides</a>) about this at a Hasgeek event (<a class="reference external" href="https://www.youtube.com/watch?v=dY_M0j4OMQw">video</a>).</p>
+<p>This bug in the AI ecosystem allows Nvidia to segment us into GPU rich and GPU poor. It is able to charge us more for less. I spent a lot of time this year solving this bug. We have dug up an amazing C++ framework called <a class="reference external" href="http://chsasank.com/sycl-portable-cuda-alternative.html">SYCL</a> and <a class="reference external" href="https://chsasank.com/portblas-portable-blas-across-gpus.html">benchmarked it</a>. We discovered that LLVM as a framework <a class="reference external" href="https://chsasank.com/intermediate-representations-for-gpu.html">doesn’t cut it</a> as a compiler framework for GPUs. We created our own compiler framework called <a class="reference external" href="https://github.com/chsasank/llama.lisp/tree/main/src/backend">C-lisp</a> and presented about it at a <a class="reference external" href="https://arxiv.org/pdf/2410.16690">compiler conference</a> (<a class="reference external" href="https://www.youtube.com/watch?v=FeML_j7pdNY">video</a>).</p>
+<p><img alt="Vedanth Presenting Compilers" src="../_images/vedanth-compiler-tech-2024.png" /></p>
+</section>
+<section id="cloud-tax">
+<h2>Cloud Tax<a class="headerlink" href="#cloud-tax" title="Link to this heading">¶</a></h2>
+<p>As much fun we had doing this, we soon realized the real villain in the compute story is not Nvidia but cloud. Thanks to our customers at People+AI, we figured that cloud folks are <a class="reference external" href="https://www.reddit.com/r/devops/comments/1cwi1gn/when_did_the_cloud_become_so_stupid_expensive/">wildly overcharging</a> for the compute due to the oligopoly structure in the market. While Nvidia does extract their CUDA tax, <a class="reference external" href="https://world.hey.com/dhh/why-we-re-leaving-the-cloud-654b47e0">cloud tax</a> is 10x the CUDA tax. To solve compute scaling, we have to <a class="reference external" href="https://von-neumann.ai/blog/ola-cloud-costs.html">tackle cloud</a> on its pricing.</p>
+<p>I did a lot of research on data centers in the view of setting up one. People+AI launched an initiative called <a class="reference external" href="https://peopleplus.ai/occ">Open Compute Cloud</a>. We ended up writing a <a class="reference external" href="https://pplus.ai/micromega">policy note</a> on Micro Data Centers. My model was <a class="reference external" href="https://maps.app.goo.gl/CCKAhVPBBqhe51SH9">Vigyanlabs</a> data center in Mysore. I searched for real estate so that I can <a class="reference external" href="https://von-neumann.ai/blog/micro-data-centers-power.html">setup a small data center</a> in the center of Bangalore myself. Real estate operations proved wildly difficult and I realized product development is going to take forever if I go down this path.</p>
+<p><img alt="Tanvi Presenting OCC" src="../_images/tanvi-presenting-occ.png" /></p>
+<p>Customers again showed the path here. My customers already have real estate sorted and it’s called their office or house! All I needed to do is to ensure that the computers have constant power. So I designed systems with low power consumption and to run on uninterrupted power supply (UPS) that I can ship to them. They experimented on network connections and showed that a combination of fiber and 5G SIM allows for super reliable network.</p>
+</section>
+<section id="getting-to-the-edge">
+<h2>Getting to the Edge<a class="headerlink" href="#getting-to-the-edge" title="Link to this heading">¶</a></h2>
+<p>This is where things started getting real as the year went on. I launched JOHNAIC computer at People+AI’s event called <a class="reference external" href="https://youtu.be/1Uu9UWwJ3QE?list=PLH2jjgHdv4Kckqp0inG5s9z07oIRgw60e&amp;amp;t=1161">Adbhut India</a>. We started working with their dev teams super closely. We found that we could deploy their cloud applications in a JOHNAIC directly hosted in their office. We have setup production level devops practices like uptime tracking and status pages. This made everything super reliable and easy from the point of view from customers.</p>
+<p><img alt="Tanuj Receiving JOHNAIC" src="../_images/tanuj-receiving-johnaic.jpg" /></p>
+<p>We started working with more customers starting June. A <a class="reference external" href="https://x.com/officialkrishd">customer</a> hosted his AI app and eventually scaled it all from a JOHNAIC. Another customer took a machine for private <a class="reference external" href="https://von-neumann.ai/blog/stable-diffusion-as-service.html">stable diffusion influencing</a>. We worked super closely with the customers and we improved our operating system and deployment stack considerably. One of the latest customers say that</p>
+<blockquote>
+<div><p>The time to deployment is tiny, and is the right amount of overhead for my stage. cloud providers are really suited toward overengineered enterprise devops orgs</p>
+</div></blockquote>
+<p>However convincing new developers to trust JOHNAIC with their production workloads has been really hard so far. So I have decided to bundle my own cloud applications along with JOHNAIC. I have created a stack of applications for communication, documentation, sales, customer support etc, all hosted from JOHNAIC. I presented this at a <a class="reference external" href="https://www.youtube.com/watch?v=Mw-iAhJ4VXU">Moneycontrol event</a>. Customers seem to love this new application first pitch, but it’s too soon to tell.</p>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>
+<p>Looking back, it was a wild 2024. I learnt so many things, mainly from customers. They took me <a class="reference external" href="https://chsasank.com/something-personal.html">closer to the market</a>. I moved from computers to GPUs to cloud to finally the edge. I think I have found a decent market fit with edge computing. Next year, I need to refine, validate and scale this up. Let’s see where this goes but I am super confident, all thanks to customers!</p>
+<blockquote>
+<div><p>Published on 30/12/24</p>
+</div></blockquote>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          <a class="prev-page" href="stable-diffusion-as-service.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Stable Diffusion: Automatic1111 with Distrobox and Systemd</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Sasank Chilamkurthy
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">JOHNAIC: Year One</a><ul>
+<li><a class="reference internal" href="#building-computers">Building Computers</a></li>
+<li><a class="reference internal" href="#compilers-bug">Compilers Bug</a></li>
+<li><a class="reference internal" href="#cloud-tax">Cloud Tax</a></li>
+<li><a class="reference internal" href="#getting-to-the-edge">Getting to the Edge</a></li>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>

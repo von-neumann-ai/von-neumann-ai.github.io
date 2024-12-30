@@ -1,0 +1,627 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Stable Diffusion: Automatic1111 with Distrobox and Systemd" href="stable-diffusion-as-service.html" /><link rel="prev" title="Security: Docker, Podman and Rootless Containers" href="security-rootless-containers.html" />
+        <link rel="canonical" href="https://von-neumann.ai/blog/distrobox-sudo-without-sudo.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>Distrobox: sudo without sudo - Von Neumann AI</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --color-brand-primary: #2D1A6D;
+  --color-brand-content: #2D1A6D;
+  --color-content-foreground: #2D1A6D;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: white;
+  --color-brand-content: white;
+  --color-content-foreground: white;
+  --color-background-primary: #0A031D;
+  --color-background-secondary: #0A031D;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: white;
+  --color-brand-content: white;
+  --color-content-foreground: white;
+  --color-background-primary: #0A031D;
+  --color-background-secondary: #0A031D;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Von Neumann AI</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/logo-light.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/logo-dark.png" alt="Dark Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">JOHNAIC: Your Personal AI Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hardware.html">Robust and Reliable AI Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software.html">Powerful Suite of Default Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../key-information.html">Key Information</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Blog</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Blog</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ola-cloud-costs.html">Why Ola is Moving On Prem: Cloud and its Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="micro-data-centers-power.html">Power of Micro Data Centers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security-virtualization-containerization.html">Security: Virtualization and Containerization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security-rootless-containers.html">Security: Docker, Podman and Rootless Containers</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Distrobox: <code class="docutils literal notranslate"><span class="pre">sudo</span></code> without <code class="docutils literal notranslate"><span class="pre">sudo</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="stable-diffusion-as-service.html">Stable Diffusion: Automatic1111 with Distrobox and Systemd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="johnaic-year-one.html">JOHNAIC: Year One</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/blog/distrobox-sudo-without-sudo.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="distrobox-sudo-without-sudo">
+<h1>Distrobox: <code class="docutils literal notranslate"><span class="pre">sudo</span></code> without <code class="docutils literal notranslate"><span class="pre">sudo</span></code><a class="headerlink" href="#distrobox-sudo-without-sudo" title="Link to this heading">¶</a></h1>
+<blockquote>
+<div><p>Author: Sasank Chilamkurthy</p>
+</div></blockquote>
+<p>Distrobox is a super flexible tool that comes preinstalled in JOHNAIC. It allows you to setup different Linux distributions and create your own development environment. The killer feature is the ability to do <code class="docutils literal notranslate"><span class="pre">sudo</span></code> even if your account doesn’t have it. This creates a perfect experience for a developer where they feel <em>both</em> powerful and safe. In this post, I’ll quickly explain how distrobox works followed by a quick hands on.</p>
+<section id="how-it-works">
+<h2>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h2>
+<p>In <a class="reference external" href="https://von-neumann.ai/blog/security-virtualization-containerization.html">previous</a> <a class="reference external" href="https://von-neumann.ai/blog/security-rootless-containers.html">posts</a>, we discussed ways to balance user power and protection of other users from this power. Virtual machines and containers were presented as solutions to this problem. Industry moved from VMs to containers because containers are both light weight and secure. We saw that rootless containers from podman further improve the security posture.</p>
+<p>By default, containers present independence from the host system. They have their own filesystem and network separate from host system. You need to publish ports and define mounts if you want to expose a part of the host system to the container. Let’s see this in action. Here are some of the files in my downloads folder in host system.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@JOHNAIC:~$ ls ~/Downloads/
+Miniconda3-py311_24.7.1-0-Linux-x86_64.sh
+</pre></div>
+</div>
+<p>Let’s run a container in another terminal</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@JOHNAIC:~$ podman run -it --rm ubuntu bash
+root@ca3fec3a2731:/# ls ~/Downloads/
+ls: cannot access &#39;/root/Downloads/&#39;: No such file or directory
+</pre></div>
+</div>
+<p>Note how your files are not available inside the container. Similarly network is isolated by default. Install python inside container and run a quick file server.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="o">@</span><span class="mi">675</span><span class="n">d674baf59</span><span class="p">:</span><span class="o">/</span><span class="c1"># apt update &amp;&amp; apt install -y python3</span>
+<span class="n">root</span><span class="o">@</span><span class="mi">675</span><span class="n">d674baf59</span><span class="p">:</span><span class="o">/</span><span class="c1"># python3 -m http.server</span>
+<span class="n">Serving</span> <span class="n">HTTP</span> <span class="n">on</span> <span class="mf">0.0.0.0</span> <span class="n">port</span> <span class="mi">8000</span> <span class="p">(</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">0.0.0.0</span><span class="p">:</span><span class="mi">8000</span><span class="o">/</span><span class="p">)</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Now in the host system, try accessing this http server using curl. Your connection will be refused. Thus network is isolated as well.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@JOHNAIC:~$ curl 0.0.0.0:8000
+curl: (7) Failed to connect to 0.0.0.0 port 8000 after 0 ms: Connection refused
+</pre></div>
+</div>
+<p>This sort of isolation is very useful when you want to run multiple applications in their own sandboxes independent of each other. However, this also becomes very restrictive for a user on the machine if he’s using container as a sort of OS for his development. He should be able to access his home folder and expose whatever ports he can. Thus we have distrobox with tight integration of containers with the host.</p>
+<p>Distrobox creates a user with the same username as you inside the container, mounts your home folder into it, binds all non-privileged container ports to the host ports. The root directory remains isolated inside the container. This creates an amazing experience for the user where he can run <code class="docutils literal notranslate"><span class="pre">sudo</span></code> inside a distrobox to install his packages. His home folder and code in it will be shared across different distroboxes he uses.</p>
+<p>Distrobox uses a container engine to achieve all this – either docker or podman. In JOHNAIC, distrobox is configured to work with rootless podman. This means that users themselves are sandboxed between each other thus ensuring security. Anyway, let’s get to hands on!</p>
+</section>
+<section id="hands-on">
+<h2>Hands on<a class="headerlink" href="#hands-on" title="Link to this heading">¶</a></h2>
+<p>Here’s how you create a new ubuntu distrobox</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@JOHNAIC:~$ distrobox create --name my-distro --image ubuntu:22.04 --additional-flags &quot;--device nvidia.com/gpu=all&quot;
+Creating &#39;my-distro&#39; using image ubuntu:22.04    [ OK ]
+Distrobox &#39;my-distro&#39; successfully created.
+To enter, run:
+
+distrobox enter my-distro
+</pre></div>
+</div>
+<p>Let’s break down what’s going on here.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span></code> asks distrobox to create a new distrobox</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--name</span> <span class="pre">my-distro</span></code> set the name of this box to my-distro</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--image</span> <span class="pre">ubuntu:22.04</span></code> asks distrobox to use ubuntu 22.04 as the base distribution. You can use many other distros like Debian, Fedora and openSUSE etc.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--additional-flags</span> <span class="pre">&quot;--device</span> <span class="pre">nvidia.com/gpu=all&quot;</span></code> makes nvidia gpu available inside the distrobox</p></li>
+</ul>
+<p>Now let’s enter the newly minted distrobox. When you enter a distrobox the first time, it sets it up with basic packages etc. This might take a while but it happens only once.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@JOHNAIC:~$ distrobox enter my-distro
+Starting container...                            [ OK ]
+Installing basic packages...                     [ OK ]
+Setting up devpts mounts...                      [ OK ]
+Setting up read-only mounts...                   [ OK ]
+Setting up read-write mounts...                  [ OK ]
+Setting up host&#39;s sockets integration...         [ OK ]
+Integrating host&#39;s themes, icons, fonts...       [ OK ]
+Setting up package manager exceptions...         [ OK ]
+Setting up dpkg exceptions...                    [ OK ]
+Setting up apt hooks...                          [ OK ]
+Setting up distrobox profile...                  [ OK ]
+Setting up sudo...                               [ OK ]
+Setting up groups...                             [ OK ]
+Setting up users...                              [ OK ]
+Setting up skel...                               [ OK ]
+
+Container Setup Complete!
+sasank@my-distro:~$ 
+
+</pre></div>
+</div>
+<p>Note how my prompt changed to <code class="docutils literal notranslate"><span class="pre">sasank&#64;my-distro</span></code>! I am now inside distrobox. Let’s play around inside distrobox. My Downloads are available as is!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@my-distro:~$ ls ~/Downloads/
+Miniconda3-py311_24.7.1-0-Linux-x86_64.sh
+</pre></div>
+</div>
+<p>You can do sudo inside as well!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@my-distro:~$ sudo apt install htop
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  libnl-3-200 libnl-genl-3-200
+Suggested packages:
+  lm-sensors strace
+The following NEW packages will be installed:
+  htop libnl-3-200 libnl-genl-3-200
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Need to get 200 kB of archives.
+After this operation, 589 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://archive.ubuntu.com/ubuntu jammy/main amd64 libnl-3-200 amd64 3.5.0-0.1 [59.1 kB]
+Get:2 http://archive.ubuntu.com/ubuntu jammy/main amd64 libnl-genl-3-200 amd64 3.5.0-0.1 [12.4 kB]
+Get:3 http://archive.ubuntu.com/ubuntu jammy/main amd64 htop amd64 3.0.5-7build2 [128 kB]
+Fetched 200 kB in 1s (147 kB/s)
+Selecting previously unselected package libnl-3-200:amd64.
+(Reading database ... 27094 files and directories currently installed.)
+Preparing to unpack .../libnl-3-200_3.5.0-0.1_amd64.deb ...
+Unpacking libnl-3-200:amd64 (3.5.0-0.1) ...
+Selecting previously unselected package libnl-genl-3-200:amd64.
+Preparing to unpack .../libnl-genl-3-200_3.5.0-0.1_amd64.deb ...
+Unpacking libnl-genl-3-200:amd64 (3.5.0-0.1) ...
+Selecting previously unselected package htop.
+Preparing to unpack .../htop_3.0.5-7build2_amd64.deb ...
+Unpacking htop (3.0.5-7build2) ...
+Setting up libnl-3-200:amd64 (3.5.0-0.1) ...
+Setting up libnl-genl-3-200:amd64 (3.5.0-0.1) ...
+Setting up htop (3.0.5-7build2) ...
+Processing triggers for man-db (2.10.2-1) ...
+Processing triggers for hicolor-icon-theme (0.17-2) ...
+Processing triggers for libc-bin (2.35-0ubuntu3.8) ...
+</pre></div>
+</div>
+<p>To exit distrobox, just do exit or <code class="docutils literal notranslate"><span class="pre">ctrl+D</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@my-distro:~$ exit
+logout
+sasank@JOHNAIC:~$ 
+</pre></div>
+</div>
+<p>You can see you are back in the host machine. Try <code class="docutils literal notranslate"><span class="pre">sudo</span></code> now and you’ll see it is refused.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@JOHNAIC:~$ sudo apt install htop
+[sudo] password for sasank: 
+sasank is not in the sudoers file.  This incident will be reported.
+</pre></div>
+</div>
+<p>You can access GPU inside distrobox as well!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@my-distro:~$ nvidia-smi 
+Sun Oct 13 19:32:06 2024       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 560.35.03              Driver Version: 560.35.03      CUDA Version: 12.6     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4070 ...    Off |   00000000:01:00.0 Off |                  N/A |
+|  0%   54C    P0             34W /  285W |      14MiB /  16376MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A      1174      G   /usr/lib/xorg/Xorg                              4MiB |
++-----------------------------------------------------------------------------------------+
+
+</pre></div>
+</div>
+<p>Finally, let’s verify that ports are exposed as well.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@my-distro:~$ python3 -m http.server 8001
+Serving HTTP on 0.0.0.0 port 8001 (http://0.0.0.0:8001/) ...
+</pre></div>
+</div>
+<p>Now open another terminal in host and access the files</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@JOHNAIC:~$ curl 0.0.0.0:8001
+&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01//EN&quot; &quot;http://www.w3.org/TR/html4/strict.dtd&quot;&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;
+&lt;title&gt;Directory listing for /&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Directory listing for /&lt;/h1&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;.bash_eternal_history&quot;&gt;.bash_eternal_history&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;.bash_history&quot;&gt;.bash_history&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;.bash_logout&quot;&gt;.bash_logout&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;.bashrc&quot;&gt;.bashrc&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;Desktop/&quot;&gt;Desktop/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;Documents/&quot;&gt;Documents/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;Downloads/&quot;&gt;Downloads/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;Music/&quot;&gt;Music/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;Pictures/&quot;&gt;Pictures/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;Public/&quot;&gt;Public/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;Videos/&quot;&gt;Videos/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ls</span></code> or <code class="docutils literal notranslate"><span class="pre">list</span></code> is another useful command in distrobox to see list of running distroboxes.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@JOHNAIC:~$ distrobox ls
+ID           | NAME                 | STATUS             | IMAGE                         
+ae35c77dcc9d | test                 | Up 5 days          | docker.io/library/ubuntu:22.04
+5fb1b176afd5 | my-distro            | Up 10 minutes      | docker.io/library/ubuntu:22.04
+</pre></div>
+</div>
+<p>You can run multiple distroboxes in parallel!</p>
+<section id="systemd-inside-distrobox">
+<h3>systemd <em>inside</em> distrobox<a class="headerlink" href="#systemd-inside-distrobox" title="Link to this heading">¶</a></h3>
+<p>There are some limitations to distrobox. Most containers are designed to be <em>application</em> containers. This means there’s no <code class="docutils literal notranslate"><span class="pre">init</span></code> system like systemd inside the container. For example, <code class="docutils literal notranslate"><span class="pre">ubuntu:22.04</span></code> doesn’t have <code class="docutils literal notranslate"><span class="pre">systemd</span></code> in it. This results in some subtle issues when installing a few packages. For example, let’s try to install <a class="reference external" href="https://caddyserver.com/docs/install#debian-ubuntu-raspbian">caddy</a> inside <code class="docutils literal notranslate"><span class="pre">my-distro</span></code> created above</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">debian</span><span class="o">-</span><span class="n">keyring</span> <span class="n">debian</span><span class="o">-</span><span class="n">archive</span><span class="o">-</span><span class="n">keyring</span> <span class="n">apt</span><span class="o">-</span><span class="n">transport</span><span class="o">-</span><span class="n">https</span> <span class="n">curl</span>
+<span class="n">curl</span> <span class="o">-</span><span class="mi">1</span><span class="n">sLf</span> <span class="s1">&#39;https://dl.cloudsmith.io/public/caddy/stable/gpg.key&#39;</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">gpg</span> <span class="o">--</span><span class="n">dearmor</span> <span class="o">-</span><span class="n">o</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">keyrings</span><span class="o">/</span><span class="n">caddy</span><span class="o">-</span><span class="n">stable</span><span class="o">-</span><span class="n">archive</span><span class="o">-</span><span class="n">keyring</span><span class="o">.</span><span class="n">gpg</span>
+<span class="n">curl</span> <span class="o">-</span><span class="mi">1</span><span class="n">sLf</span> <span class="s1">&#39;https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt&#39;</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">tee</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">sources</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">caddy</span><span class="o">-</span><span class="n">stable</span><span class="o">.</span><span class="n">list</span>
+<span class="n">sudo</span> <span class="n">apt</span> <span class="n">update</span>
+<span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="n">caddy</span>
+</pre></div>
+</div>
+<p>You will notice errors like this</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">policy</span><span class="o">-</span><span class="n">rc</span><span class="o">.</span><span class="n">d</span> <span class="n">returned</span> <span class="mi">101</span><span class="p">,</span> <span class="ow">not</span> <span class="n">running</span> <span class="s1">&#39;start caddy.service&#39;</span>
+</pre></div>
+</div>
+<p>Similar issue can be found when install <code class="docutils literal notranslate"><span class="pre">redis</span></code> or <code class="docutils literal notranslate"><span class="pre">postgresql</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">invoke</span><span class="o">-</span><span class="n">rc</span><span class="o">.</span><span class="n">d</span><span class="p">:</span> <span class="n">could</span> <span class="ow">not</span> <span class="n">determine</span> <span class="n">current</span> <span class="n">runlevel</span>
+<span class="n">invoke</span><span class="o">-</span><span class="n">rc</span><span class="o">.</span><span class="n">d</span><span class="p">:</span> <span class="n">policy</span><span class="o">-</span><span class="n">rc</span><span class="o">.</span><span class="n">d</span> <span class="n">denied</span> <span class="n">execution</span> <span class="n">of</span> <span class="n">start</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>This happens because these packages are looking to install a <code class="docutils literal notranslate"><span class="pre">systemd</span></code> service. We can get away from this errors by starting distrobox with init system as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@JOHNAIC:~$ distrobox create -n my-distro-init -i ubuntu:22.04 --init --additional-flags &quot;--device nvidia.com/gpu=all&quot; --additional-packages &quot;systemd libpam-systemd pipewire-audio-client-libraries&quot;
+</pre></div>
+</div>
+<p>Let’s break this command down</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-n</span></code> is short for <code class="docutils literal notranslate"><span class="pre">--name</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i</span></code> is short for <code class="docutils literal notranslate"><span class="pre">--image</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--init</span></code> tells distrobox to setup init system and run as system container</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--additional-packages</span> <span class="pre">&quot;systemd</span> <span class="pre">libpam-systemd</span> <span class="pre">pipewire-audio-client-libraries&quot;</span></code> is required for <code class="docutils literal notranslate"><span class="pre">--init</span></code> to work because systemd is not installed in <code class="docutils literal notranslate"><span class="pre">ubuntu:22.04</span></code> image</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@JOHNAIC:~$ distrobox enter my-distro-init
+Starting container...                            [ OK ]
+Installing basic packages...                     [ OK ]
+Setting up devpts mounts...                      [ OK ]
+Setting up read-only mounts...                   [ OK ]
+Setting up read-write mounts...                  [ OK ]
+Setting up host&#39;s sockets integration...         [ OK ]
+Integrating host&#39;s themes, icons, fonts...       [ OK ]
+Setting up distrobox profile...                  [ OK ]
+Setting up sudo...                               [ OK ]
+Setting up groups...                             [ OK ]
+Setting up users...                              [ OK ]
+Setting up skel...                               [ OK ]
+Setting up init system...                        [ OK ]
+Firing up init system...                         [ OK ]
+
+Container Setup Complete!
+</pre></div>
+</div>
+<p>Let’s install <code class="docutils literal notranslate"><span class="pre">redis</span></code> and start the service</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sasank@my-distro-init:~$ sudo apt install -y redis
+sasank@my-distro-init:~$ sudo service redis-server start
+sasank@my-distro-init:~$ sudo service redis-server status
+● redis-server.service - Advanced key-value store
+     Loaded: loaded (/lib/systemd/system/redis-server.service; enabled; vendor preset: enabled)
+     Active: active (running) since Sun 2024-10-13 14:09:48 UTC; 917ms ago
+       Docs: http://redis.io/documentation,
+             man:redis-server(1)
+   Main PID: 7946 (redis-server)
+     Status: &quot;Ready to accept connections&quot;
+      Tasks: 5 (limit: 307)
+     Memory: 2.9M
+        CPU: 537ms
+     CGroup: /system.slice/redis-server.service
+             └─7946 &quot;/usr/bin/redis-server 127.0.0.1:6379&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot;
+</pre></div>
+</div>
+<p>Thus, <code class="docutils literal notranslate"><span class="pre">systemd</span></code> is working inside distrobox!</p>
+</section>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">¶</a></h2>
+<p>In this post, we saw how containers create a sandbox environment and how this is not great experience for developers. Distrobox, running on rootless podman, is presented as a solution to this problem. In distrobox, we can use <code class="docutils literal notranslate"><span class="pre">sudo</span></code> even though the user doesn’t have root permissions on the host system. We had a hands on session with distrobox where we installed the <code class="docutils literal notranslate"><span class="pre">htop</span></code> package inside distrobox using <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">htop</span></code>. We saw limitations of <code class="docutils literal notranslate"><span class="pre">ubuntu:22.04</span></code> based distrobox where systemd is not available inside. We found a fix for this by using <code class="docutils literal notranslate"><span class="pre">--init</span></code> and <code class="docutils literal notranslate"><span class="pre">--additional-packages</span></code> flags.</p>
+<blockquote>
+<div><p>Published on 13/10/24</p>
+</div></blockquote>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="stable-diffusion-as-service.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Stable Diffusion: Automatic1111 with Distrobox and Systemd</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="security-rootless-containers.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Security: Docker, Podman and Rootless Containers</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Sasank Chilamkurthy
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Distrobox: <code class="docutils literal notranslate"><span class="pre">sudo</span></code> without <code class="docutils literal notranslate"><span class="pre">sudo</span></code></a><ul>
+<li><a class="reference internal" href="#how-it-works">How it works</a></li>
+<li><a class="reference internal" href="#hands-on">Hands on</a><ul>
+<li><a class="reference internal" href="#systemd-inside-distrobox">systemd <em>inside</em> distrobox</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>
