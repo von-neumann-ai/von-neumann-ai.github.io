@@ -1,0 +1,9 @@
+services:
+  website:
+      build: .
+      command: bash -c 'cd /apps/website && make html && caddy file-server --root build/html'
+      volumes:
+        - ./:/apps/website
+      ports:
+        - 7080:80
+      restart: always

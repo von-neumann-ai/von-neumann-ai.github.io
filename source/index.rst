@@ -40,9 +40,9 @@ Assuming you scale and buy a new server every year, here is how server costs wor
 .. figure:: _static/cost-dynamics.png
    :alt: JOHNAIC, Your Personal AI Server
 
-**Indices and tables**:
-
 .. toctree::
+   :hidden:
+
    self
    hardware
    software
